@@ -1,0 +1,18 @@
+{
+    "manifest_version": 2,
+    "name": "SearXNG favicons",
+    "version": "0.1",
+
+    "description": "Adds favicons next to the search result of the SearXNG search engine.",
+
+    "icons": {
+        "48": "icons/border-48.png"
+    },
+
+    "content_scripts": [
+        {
+            "matches": ["*://searx.bndkt.io/search*"],
+            "js": ["add-favicons.js"]
+        }
+    ]
+}
