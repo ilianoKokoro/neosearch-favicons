@@ -11,4 +11,12 @@ async function saveOptions(e) {
         size: size,
     });
 }
+
+async function retrieveSettings() {
+    res = await browser.storage.sync.get("size");
+    const size = res.size || DEFAULT_ICON_SIZE;
+
+    document.querySelector("#size").value = size || 26;
+}
+document.addEventListener("DOMContentLoaded", retrieveSettings);
 document.querySelector("form").addEventListener("submit", saveOptions);
