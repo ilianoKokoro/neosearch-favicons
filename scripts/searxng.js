@@ -3,29 +3,47 @@ const SUFFIX_ICON_URL = ".ico";
 
 // Play around for customizations
 const UPDATE_DELAY = 1000;
-const ICON_SIZE = 32;
-const ICON_UNIT = "em";
+const DEFAULT_ICON_SIZE = 26;
+const ICON_UNIT = "rem";
 
 const parse = Range.prototype.createContextualFragment.bind(
     document.createRange()
 );
-
+// -----------------
 addFavicons();
 setInterval(addFavicons, UPDATE_DELAY);
+// -----------------
 
-function addFavicons() {
+async function addFavicons() {
+    res = await browser.storage.sync.get("size");
+    const size = res.size || DEFAULT_ICON_SIZE;
+
+    resetAllOutdatedFavicons(size);
+
     const linkElements = document.querySelectorAll("body a.url_wrapper");
-
     linkElements.forEach((link) => {
         const websiteUrl = link.href;
         const websiteDomain = getDomainFromUrl(websiteUrl);
         const fullIconUrl = `${PREFIX_ICON_URL}${websiteDomain}${SUFFIX_ICON_URL}`;
         const newLinkedFavicon = parseIntoHTML(
-            `<a href="${websiteUrl}"><img height="${ICON_SIZE}${ICON_UNIT}" width="${ICON_SIZE}${ICON_UNIT}" src="${fullIconUrl}" alt="${websiteDomain} icon"></a>`
+            `<a class="neosearch-favicon" href="${websiteUrl}"><img height="${size}${ICON_UNIT}" width="${size}${ICON_UNIT}" src="${fullIconUrl}" alt="${websiteDomain} icon"></a>`
         );
-        console.log(newLinkedFavicon);
+
         if (!link.parentNode.innerHTML.includes(newLinkedFavicon.innerHTML)) {
             link.parentNode.insertBefore(newLinkedFavicon, link);
+        }
+    });
+}
+
+function resetAllOutdatedFavicons(currentSize) {
+    const favicons = document.querySelectorAll("a.neosearch-favicon");
+    favicons.forEach((favicon) => {
+        const imageElement = favicon.firstChild;
+        if (
+            imageElement.height != currentSize ||
+            imageElement.width != currentSize
+        ) {
+            favicon.remove();
         }
     });
 }
