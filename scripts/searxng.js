@@ -6,6 +6,10 @@ const UPDATE_DELAY = 1000;
 const ICON_SIZE = 32;
 const ICON_UNIT = "em";
 
+const parse = Range.prototype.createContextualFragment.bind(
+    document.createRange()
+);
+
 addFavicons();
 setInterval(addFavicons, UPDATE_DELAY);
 
@@ -16,20 +20,21 @@ function addFavicons() {
         const websiteUrl = link.href;
         const websiteDomain = getDomainFromUrl(websiteUrl);
         const fullIconUrl = `${PREFIX_ICON_URL}${websiteDomain}${SUFFIX_ICON_URL}`;
-        const newLinkedFavicon = createElementFromString(
+        const newLinkedFavicon = parseIntoHTML(
             `<a href="${websiteUrl}"><img height="${ICON_SIZE}${ICON_UNIT}" width="${ICON_SIZE}${ICON_UNIT}" src="${fullIconUrl}" alt="${websiteDomain} icon"></a>`
         );
-
+        console.log(newLinkedFavicon);
         if (!link.parentNode.innerHTML.includes(newLinkedFavicon.innerHTML)) {
             link.parentNode.insertBefore(newLinkedFavicon, link);
         }
     });
 }
 
-function createElementFromString(htmlString) {
-    const tempDiv = document.createElement("div");
-    tempDiv.innerHTML = htmlString.trim();
-    return tempDiv.firstChild;
+function parseIntoHTML(htmlString) {
+    const fragment = parse(htmlString);
+    const tempElement = document.createElement("div");
+    tempElement.appendChild(fragment);
+    return tempElement.firstChild;
 }
 
 function getDomainFromUrl(url) {
