@@ -1,9 +1,10 @@
 {
     "manifest_version": 2,
-    "name": "SearXNG favicons",
-    "version": "0.1",
+    "name": "NeoSearch favicons",
+    "version": "0.2",
+    "author": "Ilian Delagrange",
 
-    "description": "Adds favicons next to the search result of the SearXNG search engine.",
+    "description": "Adds favicons next to the results of search engines that do not support them natively. List of current supported engines : SearXNG",
 
     "icons": {
         "48": "icons/border-48.png"
@@ -12,7 +13,7 @@
     "content_scripts": [
         {
             "matches": ["*://searx.bndkt.io/search*"],
-            "js": ["add-favicons.js"]
+            "js": ["searxng.js"]
         }
     ]
 }
