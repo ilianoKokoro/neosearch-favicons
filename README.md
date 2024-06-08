@@ -1,0 +1,1 @@
+# Searxng-favicons-firefox
