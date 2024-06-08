@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "NeoSearch favicons",
-    "version": "1.0",
+    "version": "1.1",
     "author": "Ilian Delagrange",
 
     "description": "Adds favicons next to the results of search engines that do not support them natively. List of current supported engines : SearXNG",
