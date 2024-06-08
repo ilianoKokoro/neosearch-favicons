@@ -1,19 +1,30 @@
 {
     "manifest_version": 2,
     "name": "NeoSearch favicons",
-    "version": "0.2",
+    "version": "1.0",
     "author": "Ilian Delagrange",
 
     "description": "Adds favicons next to the results of search engines that do not support them natively. List of current supported engines : SearXNG",
 
     "icons": {
-        "48": "icons/border-48.png"
+        "171": "icons/square.png"
+    },
+
+    "options_ui": {
+        "page": "./ui/options.html"
+    },
+    "browser_action": {
+        "default_icon": {
+            "171": "icons/square.png"
+        },
+        "default_title": "Open settings",
+        "default_popup": "./ui/options.html"
     },
 
     "content_scripts": [
         {
             "matches": ["*://searx.bndkt.io/search*"],
-            "js": ["searxng.js"]
+            "js": ["./scripts/searxng.js"]
         }
     ]
 }
