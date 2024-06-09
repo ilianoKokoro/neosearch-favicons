@@ -3,23 +3,31 @@
 
 <head>
     <meta charset="utf-8" />
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
     <link rel="stylesheet" href="options.css">
 
     <script src="options.js" defer></script>
 </head>
 
 <body class="container">
-    <div class="m-5">
-        <h1 class="title text-center m-1">NeoSearch favicons options</h1>
+    <div class="m-6">
+        <h1 class="title">NeoSearch favicons options</h1>
+        <h1 class="subtitle mt-4">Toggle the extension :</h1>
+        <div class="field is-grouped is-grouped-centered">
+            <div class="control">
+                <button name="toggle" type="button" class="button is-large is-success">Enabled</button>
+            </div>
+        </div>
+        <hr>
         <form>
-            <div class="d-flex flex-row align-content-center justify-content-center">
-                <label for="size" class="col-form-label">Favicon size</label>
-                <input type="text" id="size" name="size" class="form-control w-auto" />
+            <h1 class="subtitle">Settings :</h1>
+            <div class="field is-grouped">
+                <label for="size" class="label">Favicon size</label>
+                <div class="control">
+                    <input type="text" id="size" name="size" class="input">
+                </div>
             </div>
-            <div class="m-5">
-                <button type="submit" class="btn btn-accent w-100">Save</button>
-            </div>
+            <button type="submit" class="button is-primary is-fullwidth">Save</button>
         </form>
     </div>
 </body>
