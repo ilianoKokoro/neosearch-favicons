@@ -5,16 +5,21 @@ async function saveOptions(e) {
 
     let size = document.querySelector("#size").value;
     if (size < CONSTANTS.MIN_ICON_SIZE || size > CONSTANTS.MAX_ICON_SIZE) {
-        size = CONSTANTS.DEFAULT_ICON_SIZE;
         showError(
             `The size must be a number between ${CONSTANTS.MIN_ICON_SIZE} and ${CONSTANTS.MAX_ICON_SIZE}.`
         );
         return;
     }
 
+    if (isNaN(size)) {
+        showError(`The size must be a number.`);
+        return;
+    }
+
     await browser.storage.sync.set({
         size: size,
     });
+    showMessage("Settings saved.");
 }
 
 async function retrieveSettings() {
@@ -63,12 +68,31 @@ function showError(message) {
     const modal = document.getElementById("modal");
     modal.classList.add("is-active");
     const errorParagraph = document.getElementById("error-message");
+    const paragraph = document.getElementById("message");
+    paragraph.textContent = "";
     errorParagraph.textContent = message;
 }
 
 function closeModal() {
     const modal = document.getElementById("modal");
     modal.classList.remove("is-active");
+}
+
+async function resetDefaults() {
+    await browser.storage.sync.set({
+        size: CONSTANTS.DEFAULT_ICON_SIZE,
+    });
+    retrieveSettings();
+    showMessage("Settings restored to default.");
+}
+
+function showMessage(message) {
+    const modal = document.getElementById("modal");
+    modal.classList.add("is-active");
+    const errorParagraph = document.getElementById("error-message");
+    const paragraph = document.getElementById("message");
+    errorParagraph.textContent = "";
+    paragraph.textContent = message;
 }
 
 document.addEventListener("DOMContentLoaded", retrieveSettings);
@@ -80,5 +104,9 @@ document.addEventListener("click", function (event) {
 
     if (event.target.classList.contains("toggle")) {
         toggleStatus();
+    }
+
+    if (event.target.classList.contains("reset-defaults")) {
+        resetDefaults();
     }
 });
