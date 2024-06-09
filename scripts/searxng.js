@@ -21,16 +21,25 @@ async function addFavicons() {
     resetAllOutdatedFavicons(size);
 
     const linkElements = document.querySelectorAll("body a.url_wrapper");
-    linkElements.forEach((link) => {
-        const websiteUrl = link.href;
-        const websiteDomain = getDomainFromUrl(websiteUrl);
-        const fullIconUrl = `${PREFIX_ICON_URL}${websiteDomain}${SUFFIX_ICON_URL}`;
-        const newLinkedFavicon = parseIntoHTML(
-            `<a class="neosearch-favicon" href="${websiteUrl}"><img height="${size}${ICON_UNIT}" width="${size}${ICON_UNIT}" src="${fullIconUrl}" alt="${websiteDomain} icon"></a>`
-        );
+    linkElements.forEach(async (link) => {
+        try {
+            const websiteUrl = link.href;
+            const websiteDomain = getDomainFromUrl(websiteUrl);
+            const fullIconUrl = `${PREFIX_ICON_URL}${websiteDomain}${SUFFIX_ICON_URL}`;
 
-        if (!link.parentNode.innerHTML.includes(newLinkedFavicon.innerHTML)) {
-            link.parentNode.insertBefore(newLinkedFavicon, link);
+            const dataUri = await toDataUri(fullIconUrl);
+
+            const newLinkedFavicon = parseIntoHTML(
+                `<a class="neosearch-favicon" href="${websiteUrl}"><img height="${size}${ICON_UNIT}" width="${size}${ICON_UNIT}" src="${dataUri}" alt="${websiteDomain} icon"></a>`
+            );
+
+            if (
+                !link.parentNode.innerHTML.includes(newLinkedFavicon.innerHTML)
+            ) {
+                link.parentNode.insertBefore(newLinkedFavicon, link);
+            }
+        } catch (error) {
+            console.error(error);
         }
     });
 }
@@ -47,6 +56,34 @@ function resetAllOutdatedFavicons(currentSize) {
         }
     });
 }
+
+async function toDataUri(url) {
+    return new Promise((resolve, reject) => {
+        var xhr = new XMLHttpRequest();
+        xhr.onload = function () {
+            var reader = new FileReader();
+            reader.onloadend = function () {
+                resolve(reader.result);
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(xhr.response);
+        };
+        xhr.onerror = reject;
+        xhr.open("GET", url);
+        xhr.responseType = "blob";
+        xhr.send();
+    });
+}
+// Use the function to get the data URI
+toDataUri(
+    "https://icons.duckduckgo.com/ip3/letstest.ru.ico",
+    function (dataUri) {
+        // Now you can use the data URI as the src of an image
+        var img = document.createElement("img");
+        img.src = dataUri;
+        document.body.appendChild(img);
+    }
+);
 
 function parseIntoHTML(htmlString) {
     const fragment = parse(htmlString);
