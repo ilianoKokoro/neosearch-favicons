@@ -120,7 +120,8 @@
                 "*://searx.foss.family/search*",
                 "*://searx.nobulart.com/search*"
             ],
-            "js": ["./scripts/searxng.js"]
+            "js": ["./scripts/searxng.js"],
+            "run_at": "document_end"
         }
     ],
 

@@ -15,45 +15,70 @@ setInterval(addFavicons, UPDATE_DELAY);
 // -----------------
 
 async function addFavicons() {
-    res = await browser.storage.sync.get("size");
-    const size = res.size || DEFAULT_ICON_SIZE;
+    // Button
+    const isEnabledRes = await browser.storage.sync.get("isEnabled");
+    const isEnabled = isEnabledRes.isEnabled || CONSTANTS.DEFAULT_STATUS;
+    if (isEnabled === "true") {
+        const sizeRes = await browser.storage.sync.get("size");
+        const size = sizeRes.size || DEFAULT_ICON_SIZE;
 
-    resetAllOutdatedFavicons(size);
+        resetAllOutdatedFavicons(size);
 
-    const linkElements = document.querySelectorAll("body a.url_wrapper");
-    linkElements.forEach(async (link) => {
-        try {
-            const websiteUrl = link.href;
-            const websiteDomain = getDomainFromUrl(websiteUrl);
-            const fullIconUrl = `${PREFIX_ICON_URL}${websiteDomain}${SUFFIX_ICON_URL}`;
+        const linkElements = document.querySelectorAll("body a.url_wrapper");
+        linkElements.forEach(async (link) => {
+            try {
+                const websiteUrl = link.href;
+                const websiteDomain = getDomainFromUrl(websiteUrl);
+                const fullIconUrl = `${PREFIX_ICON_URL}${websiteDomain}${SUFFIX_ICON_URL}`;
 
-            const dataUri = await toDataUri(fullIconUrl);
+                const dataUri = await toDataUri(fullIconUrl);
 
-            const newLinkedFavicon = parseIntoHTML(
-                `<a class="neosearch-favicon" href="${websiteUrl}"><img height="${size}${ICON_UNIT}" width="${size}${ICON_UNIT}" src="${dataUri}" alt="${websiteDomain} icon"></a>`
-            );
+                const newLinkedFavicon = parseIntoHTML(
+                    `<a class="neosearch-favicon" href="${websiteUrl}"><img height="${size}${ICON_UNIT}" width="${size}${ICON_UNIT}" src="${dataUri}" alt="${websiteDomain} icon"></a>`
+                );
 
-            if (
-                !link.parentNode.innerHTML.includes(newLinkedFavicon.innerHTML)
-            ) {
-                link.parentNode.insertBefore(newLinkedFavicon, link);
+                if (
+                    !link.parentNode.innerHTML.includes(
+                        newLinkedFavicon.innerHTML
+                    )
+                ) {
+                    link.parentNode.insertBefore(newLinkedFavicon, link);
+                }
+            } catch (error) {
+                console.error(error);
             }
-        } catch (error) {
-            console.error(error);
-        }
-    });
+        });
+    } else {
+        resetAllFavicons();
+    }
+}
+
+function getAllFavicons() {
+    return document.querySelectorAll("a.neosearch-favicon");
 }
 
 function resetAllOutdatedFavicons(currentSize) {
-    const favicons = document.querySelectorAll("a.neosearch-favicon");
+    const favicons = getAllFavicons();
+    const realFavicons = [];
     favicons.forEach((favicon) => {
         const imageElement = favicon.firstChild;
         if (
             imageElement.height != currentSize ||
             imageElement.width != currentSize
         ) {
-            favicon.remove();
+            realFavicons.push(favicon);
         }
+    });
+    resetFavicons(realFavicons);
+}
+
+function resetAllFavicons() {
+    resetFavicons(getAllFavicons());
+}
+
+function resetFavicons(favicons) {
+    favicons.forEach((favicon) => {
+        favicon.remove();
     });
 }
 
