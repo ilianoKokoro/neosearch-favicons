@@ -17,7 +17,7 @@ setInterval(addFavicons, UPDATE_DELAY);
 async function addFavicons() {
     // Button
     const isEnabledRes = await browser.storage.sync.get("isEnabled");
-    const isEnabled = isEnabledRes.isEnabled || CONSTANTS.DEFAULT_STATUS;
+    const isEnabled = isEnabledRes.isEnabled || "true";
     if (isEnabled === "true") {
         const sizeRes = await browser.storage.sync.get("size");
         const size = sizeRes.size || DEFAULT_ICON_SIZE;
