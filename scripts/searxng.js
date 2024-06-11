@@ -11,15 +11,16 @@ const parse = Range.prototype.createContextualFragment.bind(
 );
 
 //#region Main loop
-addFavicons();
-setInterval(addFavicons, UPDATE_DELAY);
+main();
+setInterval(main, UPDATE_DELAY);
 //#endregion
 
 async function main() {
-    // Button
+    // Status
     const isEnabledRes = await browser.storage.sync.get("isEnabled");
     const isEnabled = isEnabledRes.isEnabled || "true";
     if (isEnabled === "true") {
+        // Size
         const sizeRes = await browser.storage.sync.get("size");
         const size = sizeRes.size || DEFAULT_ICON_SIZE;
 
