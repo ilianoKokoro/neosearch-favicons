@@ -1,5 +1,24 @@
 import CONSTANTS from "../constants.js";
 
+//#region Event listeners :
+document.addEventListener("DOMContentLoaded", retrieveSettings);
+document.querySelector("form").addEventListener("submit", saveOptions);
+document.addEventListener("click", function (event) {
+    if (event.target.classList.contains("modal-close-custom")) {
+        closeModal();
+    }
+
+    if (event.target.classList.contains("toggle")) {
+        toggleStatus();
+    }
+
+    if (event.target.classList.contains("reset-defaults")) {
+        resetDefaults();
+    }
+});
+// #endregion
+
+//#region Settings write
 async function saveOptions(e) {
     e.preventDefault();
 
@@ -22,18 +41,6 @@ async function saveOptions(e) {
     showMessage("Settings saved.");
 }
 
-async function retrieveSettings() {
-    // Status
-    const isEnabledRes = await browser.storage.sync.get("isEnabled");
-    const isEnabled = isEnabledRes.isEnabled || CONSTANTS.DEFAULT_STATUS;
-    setButtonStatus(isEnabled);
-
-    // Size
-    const sizeRes = await browser.storage.sync.get("size");
-    const size = sizeRes.size || CONSTANTS.DEFAULT_ICON_SIZE;
-    document.querySelector("#size").value = size || CONSTANTS.DEFAULT_ICON_SIZE;
-}
-
 async function toggleStatus() {
     const isEnabledRes = await browser.storage.sync.get("isEnabled");
     let isEnabled = isEnabledRes.isEnabled || CONSTANTS.DEFAULT_STATUS;
@@ -51,6 +58,28 @@ async function toggleStatus() {
     setButtonStatus(isEnabled);
 }
 
+async function resetDefaults() {
+    await browser.storage.sync.set({
+        size: CONSTANTS.DEFAULT_ICON_SIZE,
+    });
+    retrieveSettings();
+    showMessage("Settings restored to default.");
+}
+// #endregion
+
+//#region Settings read
+async function retrieveSettings() {
+    // Status
+    const isEnabledRes = await browser.storage.sync.get("isEnabled");
+    const isEnabled = isEnabledRes.isEnabled || CONSTANTS.DEFAULT_STATUS;
+    setButtonStatus(isEnabled);
+
+    // Size
+    const sizeRes = await browser.storage.sync.get("size");
+    const size = sizeRes.size || CONSTANTS.DEFAULT_ICON_SIZE;
+    document.querySelector("#size").value = size || CONSTANTS.DEFAULT_ICON_SIZE;
+}
+
 function setButtonStatus(status) {
     const button = document.getElementById("toggle");
     if (status === "true") {
@@ -63,7 +92,9 @@ function setButtonStatus(status) {
         button.textContent = "Disabled";
     }
 }
+// #endregion
 
+//#region Modal controls :
 function showError(message) {
     const modal = document.getElementById("modal");
     modal.classList.add("is-active");
@@ -71,19 +102,6 @@ function showError(message) {
     const paragraph = document.getElementById("message");
     paragraph.textContent = "";
     errorParagraph.textContent = message;
-}
-
-function closeModal() {
-    const modal = document.getElementById("modal");
-    modal.classList.remove("is-active");
-}
-
-async function resetDefaults() {
-    await browser.storage.sync.set({
-        size: CONSTANTS.DEFAULT_ICON_SIZE,
-    });
-    retrieveSettings();
-    showMessage("Settings restored to default.");
 }
 
 function showMessage(message) {
@@ -95,18 +113,8 @@ function showMessage(message) {
     paragraph.textContent = message;
 }
 
-document.addEventListener("DOMContentLoaded", retrieveSettings);
-document.querySelector("form").addEventListener("submit", saveOptions);
-document.addEventListener("click", function (event) {
-    if (event.target.classList.contains("modal-close-custom")) {
-        closeModal();
-    }
-
-    if (event.target.classList.contains("toggle")) {
-        toggleStatus();
-    }
-
-    if (event.target.classList.contains("reset-defaults")) {
-        resetDefaults();
-    }
-});
+function closeModal() {
+    const modal = document.getElementById("modal");
+    modal.classList.remove("is-active");
+}
+// #endregion

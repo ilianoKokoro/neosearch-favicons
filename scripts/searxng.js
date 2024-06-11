@@ -9,12 +9,13 @@ const ICON_UNIT = "rem";
 const parse = Range.prototype.createContextualFragment.bind(
     document.createRange()
 );
-// -----------------
+
+//#region Main loop
 addFavicons();
 setInterval(addFavicons, UPDATE_DELAY);
-// -----------------
+//#endregion
 
-async function addFavicons() {
+async function main() {
     // Button
     const isEnabledRes = await browser.storage.sync.get("isEnabled");
     const isEnabled = isEnabledRes.isEnabled || "true";
@@ -53,10 +54,7 @@ async function addFavicons() {
     }
 }
 
-function getAllFavicons() {
-    return document.querySelectorAll("a.neosearch-favicon");
-}
-
+//#region Favicon management
 function resetAllOutdatedFavicons(currentSize) {
     const favicons = getAllFavicons();
     const realFavicons = [];
@@ -76,10 +74,28 @@ function resetAllFavicons() {
     resetFavicons(getAllFavicons());
 }
 
+function getAllFavicons() {
+    return document.querySelectorAll("a.neosearch-favicon");
+}
+
 function resetFavicons(favicons) {
     favicons.forEach((favicon) => {
         favicon.remove();
     });
+}
+//#endregion
+
+//#region Helper functions
+function parseIntoHTML(htmlString) {
+    const fragment = parse(htmlString);
+    const tempElement = document.createElement("div");
+    tempElement.appendChild(fragment);
+    return tempElement.firstChild;
+}
+
+function getDomainFromUrl(url) {
+    var parsedUrl = new URL(url);
+    return parsedUrl.hostname;
 }
 
 async function toDataUri(url) {
@@ -99,25 +115,4 @@ async function toDataUri(url) {
         xhr.send();
     });
 }
-// Use the function to get the data URI
-toDataUri(
-    "https://icons.duckduckgo.com/ip3/letstest.ru.ico",
-    function (dataUri) {
-        // Now you can use the data URI as the src of an image
-        var img = document.createElement("img");
-        img.src = dataUri;
-        document.body.appendChild(img);
-    }
-);
-
-function parseIntoHTML(htmlString) {
-    const fragment = parse(htmlString);
-    const tempElement = document.createElement("div");
-    tempElement.appendChild(fragment);
-    return tempElement.firstChild;
-}
-
-function getDomainFromUrl(url) {
-    var parsedUrl = new URL(url);
-    return parsedUrl.hostname;
-}
+//#endregion
