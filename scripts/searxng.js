@@ -1,6 +1,13 @@
 const PREFIX_ICON_URL = "https://icons.duckduckgo.com/ip3/";
 const SUFFIX_ICON_URL = ".ico";
 
+const TRUE = "true";
+const FALSE = "false";
+const LINK_ICON_CLASS = "neosearch-favicon";
+const URL_CLASS = "url_wrapper";
+const SIZE_STORAGE_KEY = "size";
+const STATUS_STORAGE_KEY = "isEnabled";
+
 // Play around for customizations
 const UPDATE_DELAY = 1000;
 const DEFAULT_ICON_SIZE = 26;
@@ -17,16 +24,16 @@ setInterval(main, UPDATE_DELAY);
 
 async function main() {
     // Status
-    const isEnabledRes = await browser.storage.sync.get("isEnabled");
-    const isEnabled = isEnabledRes.isEnabled || "true";
-    if (isEnabled === "true") {
+    const isEnabledRes = await browser.storage.sync.get(STATUS_STORAGE_KEY);
+    const isEnabled = isEnabledRes.isEnabled || TRUE;
+    if (isEnabled === TRUE) {
         // Size
-        const sizeRes = await browser.storage.sync.get("size");
+        const sizeRes = await browser.storage.sync.get(SIZE_STORAGE_KEY);
         const size = sizeRes.size || DEFAULT_ICON_SIZE;
 
         resetAllOutdatedFavicons(size);
 
-        const linkElements = document.querySelectorAll("body a.url_wrapper");
+        const linkElements = document.querySelectorAll(`body a.${URL_CLASS}`);
         linkElements.forEach(async (link) => {
             try {
                 const websiteUrl = link.href;
@@ -36,7 +43,7 @@ async function main() {
                 const dataUri = await toDataUri(fullIconUrl);
 
                 const newLinkedFavicon = parseIntoHTML(
-                    `<a class="neosearch-favicon" href="${websiteUrl}"><img height="${size}${ICON_UNIT}" width="${size}${ICON_UNIT}" src="${dataUri}" alt="${websiteDomain} icon"></a>`
+                    `<a class="${LINK_ICON_CLASS}" href="${websiteUrl}"><img height="${size}${ICON_UNIT}" width="${size}${ICON_UNIT}" src="${dataUri}" alt="${websiteDomain} icon"></a>`
                 );
 
                 if (
@@ -76,7 +83,7 @@ function resetAllFavicons() {
 }
 
 function getAllFavicons() {
-    return document.querySelectorAll("a.neosearch-favicon");
+    return document.querySelectorAll(`a.${LINK_ICON_CLASS}`);
 }
 
 function resetFavicons(favicons) {
