@@ -126,7 +126,7 @@
                 "*://searx.nobulart.com/search*"
             ],
             "js": ["./scripts/searxng.js"],
-            "run_at": "document_idle"
+            "run_at": "document_end"
         }
     ],
 
