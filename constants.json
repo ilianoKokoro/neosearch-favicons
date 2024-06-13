@@ -36,5 +36,8 @@
     "SETTINGS_NUMBER_FAILED_MSG": "The size must be a number.",
 
     "SIZE_STORAGE_KEY": "size",
-    "STATUS_STORAGE_KEY": "isEnabled"
+    "STATUS_STORAGE_KEY": "isEnabled",
+
+    "SETTINGS_CHANGED_EVENT": "settingsChanged",
+    "BACKGROUND_SETTINGS_CHANGED_EVENT": "contentScriptMessage"
 }

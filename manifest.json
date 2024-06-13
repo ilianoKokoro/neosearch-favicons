@@ -6,6 +6,10 @@
 
     "description": "Adds favicons next to the results of search engines that do not support them natively. List of current supported engines : SearXNG",
 
+    "background": {
+        "scripts": ["./scripts/background.js"]
+    },
+
     "icons": {
         "171": "icons/square.png",
         "128": "icons/square-128.png",
@@ -16,7 +20,8 @@
 
     "options_ui": {
         "page": "./options-page/options.html",
-        "browser_style": false
+        "browser_style": false,
+        "open_in_tab": false
     },
 
     "browser_action": {
@@ -121,7 +126,7 @@
                 "*://searx.nobulart.com/search*"
             ],
             "js": ["./scripts/searxng.js"],
-            "run_at": "document_end"
+            "run_at": "document_idle"
         }
     ],
 
@@ -135,5 +140,10 @@
         }
     },
 
-    "permissions": ["storage", "https://icons.duckduckgo.com/*"]
+    "permissions": [
+        "tabs",
+        "activeTab",
+        "storage",
+        "https://icons.duckduckgo.com/*"
+    ]
 }

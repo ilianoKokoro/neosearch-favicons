@@ -47,6 +47,7 @@ async function saveOptions(e) {
         size: size,
     });
     showMessage(CONSTANTS.SETTINGS_SAVED_MSG);
+    sendMessageToBackground(CONSTANTS.SETTINGS_CHANGED_EVENT);
 }
 
 async function toggleStatus() {
@@ -64,6 +65,7 @@ async function toggleStatus() {
     });
 
     setButtonStatus(isEnabled);
+    sendMessageToBackground(CONSTANTS.SETTINGS_CHANGED_EVENT);
 }
 
 async function resetDefaults() {
@@ -72,7 +74,9 @@ async function resetDefaults() {
     });
     retrieveSettings();
     showMessage(CONSTANTS.SETTINGS_RESTORED_SAVED_MSG);
+    sendMessageToBackground(CONSTANTS.SETTINGS_CHANGED_EVENT);
 }
+
 // #endregion
 
 //#region Settings read
@@ -140,3 +144,12 @@ function closeModal() {
     modal.classList.remove(CONSTANTS.MODAL_ACTIVE_CLASS);
 }
 // #endregion
+
+//#region Event sender
+function sendMessageToBackground(type, data = {}) {
+    browser.runtime.sendMessage({
+        type: type,
+        data: data,
+    });
+}
+//#endregion

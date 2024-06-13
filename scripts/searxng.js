@@ -11,12 +11,30 @@ fetch(browser.runtime.getURL("/constants.json"))
     });
 //#endregion
 
-//#region Entrypoint
-main();
-setInterval(main, CONSTANTS.UPDATE_DELAY || 1000);
+//#region Events listeners
+console.log("Script loaded");
+
+updateFavicons();
+const targetNode = document.getElementById("urls");
+const config = { attributes: true, childList: true, subtree: true };
+const callback = (mutationsList, observer) => {
+    console.log("DOM updated...");
+    updateFavicons();
+};
+
+const observer = new MutationObserver(callback);
+observer.observe(targetNode, config);
+
+browser.runtime.onMessage.addListener((message) => {
+    console.log("Message recieved...");
+    updateFavicons();
+});
+
 //#endregion
 
-async function main() {
+async function updateFavicons() {
+    console.log("Updating...");
+
     // Status
     const isEnabledRes = await browser.storage.sync.get(
         CONSTANTS.STATUS_STORAGE_KEY
@@ -51,6 +69,7 @@ async function main() {
                         newLinkedFavicon.innerHTML
                     )
                 ) {
+                    console.log("Inserting node");
                     link.parentNode.insertBefore(newLinkedFavicon, link);
                 }
             } catch (error) {
@@ -60,6 +79,7 @@ async function main() {
     } else {
         resetAllFavicons();
     }
+    console.log("Done");
 }
 
 //#region Favicon management
