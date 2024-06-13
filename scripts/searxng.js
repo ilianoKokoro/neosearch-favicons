@@ -1,49 +1,49 @@
-const PREFIX_ICON_URL = "https://icons.duckduckgo.com/ip3/";
-const SUFFIX_ICON_URL = ".ico";
-
-const TRUE = "true";
-const FALSE = "false";
-const LINK_ICON_CLASS = "neosearch-favicon";
-const URL_CLASS = "url_wrapper";
-const SIZE_STORAGE_KEY = "size";
-const STATUS_STORAGE_KEY = "isEnabled";
-
-// Play around for customizations
-const UPDATE_DELAY = 1000;
-const DEFAULT_ICON_SIZE = 26;
-const ICON_UNIT = "rem";
-
+//#region Constants
 const parse = Range.prototype.createContextualFragment.bind(
     document.createRange()
 );
+let CONSTANTS = {};
 
-//#region Main loop
+fetch(browser.runtime.getURL("/constants.json"))
+    .then((response) => response.json())
+    .then((config) => {
+        CONSTANTS = config;
+    });
+//#endregion
+
+//#region Entrypoint
 main();
-setInterval(main, UPDATE_DELAY);
+setInterval(main, CONSTANTS.UPDATE_DELAY || 1000);
 //#endregion
 
 async function main() {
     // Status
-    const isEnabledRes = await browser.storage.sync.get(STATUS_STORAGE_KEY);
-    const isEnabled = isEnabledRes.isEnabled || TRUE;
-    if (isEnabled === TRUE) {
+    const isEnabledRes = await browser.storage.sync.get(
+        CONSTANTS.STATUS_STORAGE_KEY
+    );
+    const isEnabled = isEnabledRes.isEnabled || CONSTANTS.TRUE;
+    if (isEnabled === CONSTANTS.TRUE) {
         // Size
-        const sizeRes = await browser.storage.sync.get(SIZE_STORAGE_KEY);
-        const size = sizeRes.size || DEFAULT_ICON_SIZE;
+        const sizeRes = await browser.storage.sync.get(
+            CONSTANTS.SIZE_STORAGE_KEY
+        );
+        const size = sizeRes.size || CONSTANTS.DEFAULT_ICON_SIZE;
 
         resetAllOutdatedFavicons(size);
 
-        const linkElements = document.querySelectorAll(`body a.${URL_CLASS}`);
+        const linkElements = document.querySelectorAll(
+            `${CONSTANTS.BODY_TAG} ${CONSTANTS.LINK_TAG}.${CONSTANTS.URL_CLASS}`
+        );
         linkElements.forEach(async (link) => {
             try {
                 const websiteUrl = link.href;
                 const websiteDomain = getDomainFromUrl(websiteUrl);
-                const fullIconUrl = `${PREFIX_ICON_URL}${websiteDomain}${SUFFIX_ICON_URL}`;
+                const fullIconUrl = `${CONSTANTS.PREFIX_ICON_URL}${websiteDomain}${CONSTANTS.SUFFIX_ICON_URL}`;
 
                 const dataUri = await toDataUri(fullIconUrl);
 
                 const newLinkedFavicon = parseIntoHTML(
-                    `<a class="${LINK_ICON_CLASS}" href="${websiteUrl}"><img height="${size}${ICON_UNIT}" width="${size}${ICON_UNIT}" src="${dataUri}" alt="${websiteDomain} icon"></a>`
+                    `<a class="${CONSTANTS.LINK_ICON_CLASS}" href="${websiteUrl}"><img height="${size}${CONSTANTS.ICON_UNIT}" width="${size}${CONSTANTS.ICON_UNIT}" src="${dataUri}" alt="${websiteDomain} icon"></a>`
                 );
 
                 if (
@@ -83,7 +83,9 @@ function resetAllFavicons() {
 }
 
 function getAllFavicons() {
-    return document.querySelectorAll(`a.${LINK_ICON_CLASS}`);
+    return document.querySelectorAll(
+        `${CONSTANTS.LINK_TAG}.${CONSTANTS.LINK_ICON_CLASS}`
+    );
 }
 
 function resetFavicons(favicons) {
@@ -96,7 +98,7 @@ function resetFavicons(favicons) {
 //#region Helper functions
 function parseIntoHTML(htmlString) {
     const fragment = parse(htmlString);
-    const tempElement = document.createElement("div");
+    const tempElement = document.createElement(CONSTANTS.DIV_TAG);
     tempElement.appendChild(fragment);
     return tempElement.firstChild;
 }

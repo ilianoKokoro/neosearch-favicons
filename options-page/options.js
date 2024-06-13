@@ -1,18 +1,26 @@
-import CONSTANTS from "../constants.js";
+//#region Constants
+let CONSTANTS = {};
+
+fetch(browser.runtime.getURL("/constants.json"))
+    .then((response) => response.json())
+    .then((config) => {
+        CONSTANTS = config;
+    });
+//#endregion
 
 //#region Event listeners :
 document.addEventListener("DOMContentLoaded", retrieveSettings);
 document.querySelector("form").addEventListener("submit", saveOptions);
 document.addEventListener("click", function (event) {
-    if (event.target.classList.contains("modal-close-custom")) {
+    if (event.target.classList.contains(CONSTANTS.MODAL_CLOSE_BUTTON_CLASS)) {
         closeModal();
     }
 
-    if (event.target.classList.contains("toggle")) {
+    if (event.target.classList.contains(CONSTANTS.STATUS_BUTTON_ID)) {
         toggleStatus();
     }
 
-    if (event.target.classList.contains("reset-defaults")) {
+    if (event.target.classList.contains(CONSTANTS.DEFAULT_BUTTON_CLASS)) {
         resetDefaults();
     }
 });
@@ -22,7 +30,7 @@ document.addEventListener("click", function (event) {
 async function saveOptions(e) {
     e.preventDefault();
 
-    let size = document.querySelector("#size").value;
+    let size = document.querySelector(`#${CONSTANTS.SIZE_INPUT_ID}`).value;
     if (size < CONSTANTS.MIN_ICON_SIZE || size > CONSTANTS.MAX_ICON_SIZE) {
         showError(
             `The size must be a number between ${CONSTANTS.MIN_ICON_SIZE} and ${CONSTANTS.MAX_ICON_SIZE}.`
@@ -31,25 +39,25 @@ async function saveOptions(e) {
     }
 
     if (isNaN(size)) {
-        showError(`The size must be a number.`);
+        showError(CONSTANTS.SETTINGS_NUMBER_FAILED_MSG);
         return;
     }
 
     await browser.storage.sync.set({
         size: size,
     });
-    showMessage("Settings saved.");
+    showMessage(CONSTANTS.SETTINGS_SAVED_MSG);
 }
 
 async function toggleStatus() {
-    const isEnabledRes = await browser.storage.sync.get("isEnabled");
-    let isEnabled = isEnabledRes.isEnabled || CONSTANTS.DEFAULT_STATUS;
+    const isEnabledRes = await browser.storage.sync.get(
+        CONSTANTS.STATUS_STORAGE_KEY
+    );
 
-    if (isEnabled === "true") {
-        isEnabled = "false";
-    } else {
-        isEnabled = "true";
-    }
+    const isEnabled =
+        (isEnabledRes.isEnabled || CONSTANTS.DEFAULT_STATUS) === CONSTANTS.TRUE
+            ? CONSTANTS.FALSE
+            : CONSTANTS.TRUE;
 
     await browser.storage.sync.set({
         isEnabled: isEnabled,
@@ -63,58 +71,72 @@ async function resetDefaults() {
         size: CONSTANTS.DEFAULT_ICON_SIZE,
     });
     retrieveSettings();
-    showMessage("Settings restored to default.");
+    showMessage(CONSTANTS.SETTINGS_RESTORED_SAVED_MSG);
 }
 // #endregion
 
 //#region Settings read
 async function retrieveSettings() {
     // Status
-    const isEnabledRes = await browser.storage.sync.get("isEnabled");
+    const isEnabledRes = await browser.storage.sync.get(
+        CONSTANTS.STATUS_STORAGE_KEY
+    );
     const isEnabled = isEnabledRes.isEnabled || CONSTANTS.DEFAULT_STATUS;
     setButtonStatus(isEnabled);
 
     // Size
-    const sizeRes = await browser.storage.sync.get("size");
+    const sizeRes = await browser.storage.sync.get(CONSTANTS.SIZE_STORAGE_KEY);
     const size = sizeRes.size || CONSTANTS.DEFAULT_ICON_SIZE;
-    document.querySelector("#size").value = size || CONSTANTS.DEFAULT_ICON_SIZE;
+    document.querySelector(`#${CONSTANTS.SIZE_INPUT_ID}`).value =
+        size || CONSTANTS.DEFAULT_ICON_SIZE;
 }
 
 function setButtonStatus(status) {
-    const button = document.getElementById("toggle");
-    if (status === "true") {
-        button.classList.remove("is-danger");
-        button.classList.add("is-success");
-        button.textContent = "Enabled";
+    const button = document.getElementById(CONSTANTS.STATUS_BUTTON_ID);
+    if (button == null) {
+        return;
+    }
+    if (status === CONSTANTS.TRUE) {
+        button.classList.remove(CONSTANTS.BG_RED);
+        button.classList.add(CONSTANTS.BG_GREEN);
+        button.textContent = CONSTANTS.BUTTON_ENABLED_MSG;
     } else {
-        button.classList.remove("is-success");
-        button.classList.add("is-danger");
-        button.textContent = "Disabled";
+        button.classList.remove(CONSTANTS.BG_GREEN);
+        button.classList.add(CONSTANTS.BG_RED);
+        button.textContent = CONSTANTS.BUTTON_DISABLED_MSG;
     }
 }
 // #endregion
 
 //#region Modal controls :
 function showError(message) {
-    const modal = document.getElementById("modal");
-    modal.classList.add("is-active");
-    const errorParagraph = document.getElementById("error-message");
-    const paragraph = document.getElementById("message");
-    paragraph.textContent = "";
+    const modal = document.getElementById(CONSTANTS.MODAL_CLASS);
+    modal.classList.add(CONSTANTS.MODAL_ACTIVE_CLASS);
+    const errorParagraph = document.getElementById(
+        CONSTANTS.ERROR_MODAL_PARAGRAPH_CLASS
+    );
+    const paragraph = document.getElementById(
+        CONSTANTS.MESSAGE_MODAL_PARAGRAPH_CLASS
+    );
+    paragraph.textContent = CONSTANTS.EMPTY;
     errorParagraph.textContent = message;
 }
 
 function showMessage(message) {
-    const modal = document.getElementById("modal");
-    modal.classList.add("is-active");
-    const errorParagraph = document.getElementById("error-message");
-    const paragraph = document.getElementById("message");
-    errorParagraph.textContent = "";
+    const modal = document.getElementById(CONSTANTS.MODAL_CLASS);
+    modal.classList.add(CONSTANTS.MODAL_ACTIVE_CLASS);
+    const errorParagraph = document.getElementById(
+        CONSTANTS.ERROR_MODAL_PARAGRAPH_CLASS
+    );
+    const paragraph = document.getElementById(
+        CONSTANTS.MESSAGE_MODAL_PARAGRAPH_CLASS
+    );
+    errorParagraph.textContent = CONSTANTS.EMPTY;
     paragraph.textContent = message;
 }
 
 function closeModal() {
-    const modal = document.getElementById("modal");
-    modal.classList.remove("is-active");
+    const modal = document.getElementById(CONSTANTS.MODAL_CLASS);
+    modal.classList.remove(CONSTANTS.MODAL_ACTIVE_CLASS);
 }
 // #endregion

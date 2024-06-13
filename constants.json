@@ -1,0 +1,40 @@
+{
+    "TRUE": "true",
+    "FALSE": "false",
+    "EMPTY": "",
+
+    "DIV_TAG": "div",
+    "LINK_TAG": "a",
+    "BODY_TAG": "body",
+
+    "PREFIX_ICON_URL": "https://icons.duckduckgo.com/ip3/",
+    "SUFFIX_ICON_URL": ".ico",
+    "DEFAULT_ICON_SIZE": 26,
+    "ICON_UNIT": "rem",
+    "MAX_ICON_SIZE": 500,
+    "MIN_ICON_SIZE": 1,
+    "UPDATE_DELAY": 1000,
+
+    "LINK_ICON_CLASS": "neosearch-favicon",
+    "URL_CLASS": "url_wrapper",
+    "SIZE_INPUT_ID": "size",
+    "STATUS_BUTTON_ID": "toggle",
+
+    "BG_GREEN": "is-success",
+    "BG_RED": "is-danger",
+    "MODAL_ACTIVE_CLASS": "is-active",
+    "MODAL_CLASS": "modal",
+    "ERROR_MODAL_PARAGRAPH_CLASS": "error-message",
+    "MESSAGE_MODAL_PARAGRAPH_CLASS": "message",
+    "DEFAULT_BUTTON_CLASS": "reset-defaults",
+    "MODAL_CLOSE_BUTTON_CLASS": "modal-close-custom",
+
+    "BUTTON_ENABLED_MSG": "Enabled",
+    "BUTTON_DISABLED_MSG": "Disabled",
+    "SETTINGS_SAVED_MSG": "Settings saved.",
+    "SETTINGS_RESTORED_SAVED_MSG": "Settings restored to defaults.",
+    "SETTINGS_NUMBER_FAILED_MSG": "The size must be a number.",
+
+    "SIZE_STORAGE_KEY": "size",
+    "STATUS_STORAGE_KEY": "isEnabled"
+}
