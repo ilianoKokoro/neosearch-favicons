@@ -8,12 +8,12 @@ fetch(browser.runtime.getURL("/constants.json"))
     .then((response) => response.json())
     .then((config) => {
         CONSTANTS = config;
+        updateFavicons();
     });
 //#endregion
 
 //#region Events listeners
 
-updateFavicons();
 const targetNode = document.getElementById("urls");
 const config = { attributes: true, childList: true, subtree: true };
 const callback = (mutationsList, observer) => {
@@ -30,22 +30,12 @@ browser.runtime.onMessage.addListener((message) => {
 //#endregion
 
 async function updateFavicons() {
-    if (CONSTANTS.TRUE == undefined) {
-        console.log("Constants are not loaded, retring");
-        setTimeout(updateFavicons, 1000);
-    }
     // Status
     const isEnabledRes = await browser.storage.sync.get(
         CONSTANTS.STATUS_STORAGE_KEY
     );
     const isEnabled = isEnabledRes.isEnabled || CONSTANTS.TRUE;
 
-    console.log(`isEnabled is ${isEnabled}`);
-    console.log(`CONSTANTS.TRUE is ${CONSTANTS.TRUE}`);
-    console.log(
-        `isEnabled === CONSTANTS.TRUE is ${isEnabled === CONSTANTS.TRUE}`
-    );
-    console.log("WHY");
     if (isEnabled === CONSTANTS.TRUE) {
         // Size
         const sizeRes = await browser.storage.sync.get(
