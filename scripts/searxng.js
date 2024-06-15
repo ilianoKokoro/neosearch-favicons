@@ -3,13 +3,18 @@ const parse = Range.prototype.createContextualFragment.bind(
     document.createRange()
 );
 let CONSTANTS = {};
-
 fetch(browser.runtime.getURL("/constants.json"))
     .then((response) => response.json())
     .then((config) => {
         CONSTANTS = config;
         updateFavicons();
     });
+
+//#endregion
+
+//#region Rate limiters
+let checkTimerRunning = false;
+let reloadTimerRunning = false;
 //#endregion
 
 //#region Events listeners
@@ -28,7 +33,6 @@ browser.runtime.onMessage.addListener((message) => {
 });
 
 //#endregion
-
 async function updateFavicons() {
     // Status
     const isEnabledRes = await browser.storage.sync.get(
@@ -37,6 +41,23 @@ async function updateFavicons() {
     const isEnabled = isEnabledRes.isEnabled || CONSTANTS.TRUE;
 
     if (isEnabled === CONSTANTS.TRUE) {
+        if (reloadTimerRunning) {
+            return;
+        }
+
+        if (checkTimerRunning) {
+            reloadTimerRunning = true;
+            reloadTimer = setTimeout(() => {
+                reloadTimerRunning = false;
+            }, CONSTANTS.UPDATE_DELAY);
+            return;
+        }
+
+        checkTimerRunning = true;
+        checkTimer = setTimeout(() => {
+            checkTimerRunning = false;
+        }, CONSTANTS.UPDATE_DELAY);
+
         // Size
         const sizeRes = await browser.storage.sync.get(
             CONSTANTS.SIZE_STORAGE_KEY

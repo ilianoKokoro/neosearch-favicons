@@ -5,11 +5,11 @@ fetch(browser.runtime.getURL("/constants.json"))
     .then((response) => response.json())
     .then((config) => {
         CONSTANTS = config;
+        retrieveSettings();
     });
 //#endregion
 
 //#region Event listeners :
-document.addEventListener("DOMContentLoaded", retrieveSettings);
 document.querySelector("form").addEventListener("submit", saveOptions);
 document.addEventListener("click", function (event) {
     if (event.target.classList.contains(CONSTANTS.MODAL_CLOSE_BUTTON_CLASS)) {

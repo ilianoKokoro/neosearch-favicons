@@ -13,7 +13,7 @@
     "ICON_UNIT": "rem",
     "MAX_ICON_SIZE": 500,
     "MIN_ICON_SIZE": 1,
-    "UPDATE_DELAY": 1000,
+    "UPDATE_DELAY": 100,
 
     "LINK_ICON_CLASS": "neosearch-favicon",
     "URL_CLASS": "url_wrapper",
