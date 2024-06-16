@@ -147,9 +147,18 @@ function closeModal() {
 
 //#region Event sender
 function sendMessageToBackground(type, data = {}) {
-    browser.runtime.sendMessage({
-        type: type,
-        data: data,
+    browser.tabs.query({}).then((tabs) => {
+        tabs.forEach((tab) => {
+            browser.tabs
+                .sendMessage(tab.id, {
+                    type: type,
+                    data: data,
+                })
+                .catch((_) => {
+                    // Do nothing for the sake of speed
+                    // console.error("Sent message to an incompatible tab");
+                });
+        });
     });
 }
 //#endregion
