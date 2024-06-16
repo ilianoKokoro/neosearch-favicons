@@ -3,7 +3,7 @@ const parse = Range.prototype.createContextualFragment.bind(
     document.createRange()
 );
 let CONSTANTS = {};
-fetch(browser.runtime.getURL("/constants.json"))
+fetch(browser.runtime.getURL("/data/constants.json"))
     .then((response) => response.json())
     .then((config) => {
         CONSTANTS = config;

@@ -3,15 +3,24 @@
     "name": "NeoSearch favicons",
     "version": "1.6",
     "author": "Ilian Delagrange",
-
     "description": "Adds favicons next to the results of search engines that do not support them natively. List of current supported engines : SearXNG",
 
     "icons": {
-        "171": "icons/square.png",
-        "128": "icons/square-128.png",
-        "64": "icons/square-64.png",
-        "32": "icons/square-32.png",
-        "16": "icons/square-16.png"
+        "171": "/data/icons/square.png",
+        "128": "/data/icons/square-128.png",
+        "64": "/data/icons/square-64.png",
+        "32": "/data/icons/square-32.png",
+        "16": "/data/icons/square-16.png"
+    },
+
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "neosearch@ex.com",
+            "strict_min_version": "79.0"
+        },
+        "gecko_android": {
+            "strict_min_version": "113.0"
+        }
     },
 
     "options_ui": {
@@ -22,11 +31,11 @@
 
     "browser_action": {
         "default_icon": {
-            "171": "icons/square.png",
-            "128": "icons/square-128.png",
-            "64": "icons/square-64.png",
-            "32": "icons/square-32.png",
-            "16": "icons/square-16.png"
+            "171": "/data/icons/square.png",
+            "128": "/data/icons/square-128.png",
+            "64": "/data/icons/square-64.png",
+            "32": "/data/icons/square-32.png",
+            "16": "/data/icons/square-16.png"
         },
         "default_title": "NeoSearch favicons",
         "default_popup": "./options-page/options.html"
@@ -125,16 +134,6 @@
             "run_at": "document_end"
         }
     ],
-
-    "browser_specific_settings": {
-        "gecko": {
-            "id": "neosearch@ex.com",
-            "strict_min_version": "79.0"
-        },
-        "gecko_android": {
-            "strict_min_version": "113.0"
-        }
-    },
 
     "permissions": [
         "tabs",

@@ -1,16 +1,19 @@
-//#region Constants
+//#region Import of constants
 let CONSTANTS = {};
 
-fetch(browser.runtime.getURL("/constants.json"))
+fetch(browser.runtime.getURL("/data/constants.json"))
     .then((response) => response.json())
     .then((config) => {
         CONSTANTS = config;
+        // Entrypoint
         retrieveSettings();
     });
 //#endregion
 
-//#region Event listeners :
+//#region Event listeners
+// Save button
 document.querySelector("form").addEventListener("submit", saveOptions);
+// All other button actions
 document.addEventListener("click", function (event) {
     if (event.target.classList.contains(CONSTANTS.MODAL_CLOSE_BUTTON_CLASS)) {
         closeModal();
@@ -32,22 +35,23 @@ async function saveOptions(e) {
 
     let size = document.querySelector(`#${CONSTANTS.SIZE_INPUT_ID}`).value;
     if (size < CONSTANTS.MIN_ICON_SIZE || size > CONSTANTS.MAX_ICON_SIZE) {
-        showError(
-            `The size must be a number between ${CONSTANTS.MIN_ICON_SIZE} and ${CONSTANTS.MAX_ICON_SIZE}.`
+        showModalMessage(
+            `The size must be a number between ${CONSTANTS.MIN_ICON_SIZE} and ${CONSTANTS.MAX_ICON_SIZE}.`,
+            true
         );
         return;
     }
 
     if (isNaN(size)) {
-        showError(CONSTANTS.SETTINGS_NUMBER_FAILED_MSG);
+        showModalMessage(CONSTANTS.SETTINGS_NUMBER_FAILED_MSG, true);
         return;
     }
 
     await browser.storage.sync.set({
         size: size,
     });
-    showMessage(CONSTANTS.SETTINGS_SAVED_MSG);
-    sendMessageToBackground(CONSTANTS.SETTINGS_CHANGED_EVENT);
+    showModalMessage(CONSTANTS.SETTINGS_SAVED_MSG, false);
+    updateAllTabs();
 }
 
 async function toggleStatus() {
@@ -65,7 +69,7 @@ async function toggleStatus() {
     });
 
     setButtonStatus(isEnabled);
-    sendMessageToBackground(CONSTANTS.SETTINGS_CHANGED_EVENT);
+    updateAllTabs();
 }
 
 async function resetDefaults() {
@@ -73,8 +77,8 @@ async function resetDefaults() {
         size: CONSTANTS.DEFAULT_ICON_SIZE,
     });
     retrieveSettings();
-    showMessage(CONSTANTS.SETTINGS_RESTORED_SAVED_MSG);
-    sendMessageToBackground(CONSTANTS.SETTINGS_CHANGED_EVENT);
+    showModalMessage(CONSTANTS.SETTINGS_RESTORED_SAVED_MSG, false);
+    updateAllTabs();
 }
 
 // #endregion
@@ -100,43 +104,35 @@ function setButtonStatus(status) {
     if (button == null) {
         return;
     }
-    if (status === CONSTANTS.TRUE) {
-        button.classList.remove(CONSTANTS.BG_RED);
-        button.classList.add(CONSTANTS.BG_GREEN);
-        button.textContent = CONSTANTS.BUTTON_ENABLED_MSG;
-    } else {
-        button.classList.remove(CONSTANTS.BG_GREEN);
-        button.classList.add(CONSTANTS.BG_RED);
-        button.textContent = CONSTANTS.BUTTON_DISABLED_MSG;
-    }
+
+    const isStatusEnabled = status === CONSTANTS.TRUE;
+
+    const color = isStatusEnabled ? CONSTANTS.BG_GREEN : CONSTANTS.BG_RED;
+    const textContent = isStatusEnabled
+        ? CONSTANTS.BUTTON_ENABLED_MSG
+        : CONSTANTS.BUTTON_DISABLED_MSG;
+
+    button.classList.remove(CONSTANTS.BG_RED);
+    button.classList.remove(CONSTANTS.BG_GREEN);
+    button.classList.add(color);
+    button.textContent = textContent;
 }
 // #endregion
 
 //#region Modal controls :
-function showError(message) {
+function showModalMessage(message, isError) {
     const modal = document.getElementById(CONSTANTS.MODAL_CLASS);
     modal.classList.add(CONSTANTS.MODAL_ACTIVE_CLASS);
-    const errorParagraph = document.getElementById(
-        CONSTANTS.ERROR_MODAL_PARAGRAPH_CLASS
-    );
-    const paragraph = document.getElementById(
-        CONSTANTS.MESSAGE_MODAL_PARAGRAPH_CLASS
-    );
-    paragraph.textContent = CONSTANTS.EMPTY;
-    errorParagraph.textContent = message;
-}
 
-function showMessage(message) {
-    const modal = document.getElementById(CONSTANTS.MODAL_CLASS);
-    modal.classList.add(CONSTANTS.MODAL_ACTIVE_CLASS);
     const errorParagraph = document.getElementById(
         CONSTANTS.ERROR_MODAL_PARAGRAPH_CLASS
     );
     const paragraph = document.getElementById(
         CONSTANTS.MESSAGE_MODAL_PARAGRAPH_CLASS
     );
-    errorParagraph.textContent = CONSTANTS.EMPTY;
-    paragraph.textContent = message;
+
+    errorParagraph.textContent = isError ? message : CONSTANTS.EMPTY;
+    paragraph.textContent = isError ? CONSTANTS.EMPTY : message;
 }
 
 function closeModal() {
@@ -145,8 +141,12 @@ function closeModal() {
 }
 // #endregion
 
-//#region Event sender
-function sendMessageToBackground(type, data = {}) {
+//#region Event senders
+function updateAllTabs() {
+    sendMessageToAllTabs(CONSTANTS.SETTINGS_CHANGED_EVENT);
+}
+
+function sendMessageToAllTabs(type, data = {}) {
     browser.tabs.query({}).then((tabs) => {
         tabs.forEach((tab) => {
             browser.tabs
