@@ -1,0 +1,144 @@
+{
+    "manifest_version": 2,
+    "name": "NeoSearch favicons",
+    "version": "2.0",
+    "author": "Ilian Delagrange",
+    "description": "Adds favicons next to the results of search engines that do not support them natively. List of current supported engines : SearXNG",
+
+    "icons": {
+        "171": "/data/icons/square.png",
+        "128": "/data/icons/square-128.png",
+        "64": "/data/icons/square-64.png",
+        "32": "/data/icons/square-32.png",
+        "16": "/data/icons/square-16.png"
+    },
+
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "neosearch@ex.com",
+            "strict_min_version": "79.0"
+        },
+        "gecko_android": {
+            "id": "neosearch@ex.com",
+            "strict_min_version": "113.0"
+        }
+    },
+
+    "options_ui": {
+        "page": "./options-page/options.html",
+        "browser_style": false,
+        "open_in_tab": false
+    },
+
+    "browser_action": {
+        "default_icon": {
+            "171": "/data/icons/square.png",
+            "128": "/data/icons/square-128.png",
+            "64": "/data/icons/square-64.png",
+            "32": "/data/icons/square-32.png",
+            "16": "/data/icons/square-16.png"
+        },
+        "default_title": "NeoSearch favicons",
+        "default_popup": "./options-page/options.html"
+    },
+
+    "content_scripts": [
+        {
+            "matches": [
+                "*://baresearch.org/search*",
+                "*://copp.gg/search*",
+                "*://darmarit.org/searx/search*",
+                "*://etsi.me/search*",
+                "*://fairsuch.net/search*",
+                "*://northboot.xyz/search*",
+                "*://nyc1.sx.ggtyler.dev/search*",
+                "*://ooglester.com/search*",
+                "*://opnxng.com/search*",
+                "*://paulgo.io/search*",
+                "*://priv.au/search*",
+                "*://s.mble.dk/search*",
+                "*://s.trung.fun/search*",
+                "*://search.bus-hit.me/search*",
+                "*://search.charliewhiskey.net/search*",
+                "*://search.citw.lgbt/search*",
+                "*://search.darkness.services/search*",
+                "*://search.datura.network/search*",
+                "*://search.demoniak.ch/search*",
+                "*://search.dotone.nl/search*",
+                "*://search.einfachzocken.eu/search*",
+                "*://search.gcomm.ch/search*",
+                "*://search.hbubli.cc/search*",
+                "*://search.im-in.space/search*",
+                "*://search.in.projectsegfau.lt/search*",
+                "*://search.incogniweb.net/search*",
+                "*://search.indst.eu/search*",
+                "*://search.inetol.net/search*",
+                "*://search.ldne.xyz/search*",
+                "*://search.leptons.xyz/search*",
+                "*://search.mdosch.de/search*",
+                "*://search.nadeko.net/search*",
+                "*://search.nerdvpn.de/search*",
+                "*://search.ngn.tf/search*",
+                "*://search.ononoki.org/search*",
+                "*://search.privacyredirect.com/search*",
+                "*://search.projectsegfau.lt/search*",
+                "*://search.rhscz.eu/search*",
+                "*://search.rowie.at/search*",
+                "*://search.sapti.me/search*",
+                "*://search.smnz.de/search*",
+                "*://search.us.projectsegfau.lt/search*",
+                "*://searx.aleteoryx.me/search*",
+                "*://searx.ankha.ac/search*",
+                "*://searx.ari.lt/search*",
+                "*://searx.baczek.me/search*",
+                "*://searx.be/search*",
+                "*://searx.catfluori.de/search*",
+                "*://searx.colbster937.dev/search*",
+                "*://searx.daetalytica.io/search*",
+                "*://searx.dresden.network/search*",
+                "*://searx.electroncash.de/search*",
+                "*://searx.foss.family/search*",
+                "*://searx.hu/search*",
+                "*://searx.juancord.xyz/search*",
+                "*://searx.lunar.icu/search*",
+                "*://searx.namejeff.xyz/search*",
+                "*://searx.nobulart.com/search*",
+                "*://searx.numeriquement.fr/search*",
+                "*://searx.oakleycord.dev/search*",
+                "*://searx.ox2.fr/search*",
+                "*://searx.perennialte.ch/search*",
+                "*://searx.rhscz.eu/search*",
+                "*://searx.ro/search*",
+                "*://searx.sev.monster/search*",
+                "*://searx.techsaviours.org/search*",
+                "*://searx.tiekoetter.com/search*",
+                "*://searx.tuxcloud.net/search*",
+                "*://searx.work/search*",
+                "*://searx.zhenyapav.com/search*",
+                "*://searxng.brihx.fr/search*",
+                "*://searxng.ch/search*",
+                "*://searxng.hweeren.com/search*",
+                "*://searxng.online/search*",
+                "*://searxng.shreven.org/search*",
+                "*://searxng.site/search*",
+                "*://skyrimhater.com/search*",
+                "*://sx.catgirl.cloud/search*",
+                "*://sx.thatxtreme.dev/search*",
+                "*://sxng.violets-purgatory.dev/search*",
+                "*://vanderwilhelm.me/search*",
+                "*://www.gruble.de/search*",
+                "*://www.jabber-germany.de/searx/search*",
+                "*://xo.wtf/search*"
+            ],
+            "js": ["./scripts/searxng.js"],
+            "run_at": "document_end"
+        }
+    ],
+
+    "permissions": [
+        "tabs",
+        "activeTab",
+        "storage",
+        "https://icons.duckduckgo.com/*"
+    ]
+}
