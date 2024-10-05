@@ -34,6 +34,15 @@ browser.runtime.onMessage.addListener((message) => {
 
 //#endregion
 async function updateFavicons() {
+    // Checks for integrated favicons
+    const existingFavicons = document.querySelectorAll(
+        `${CONSTANTS.BODY_TAG} ${CONSTANTS.DIV_TAG}.${CONSTANTS.INTEGRATED_FAVICON_CLASS}`
+    );
+
+    if (existingFavicons.length != 0) {
+        return;
+    }
+
     // Status
     const isEnabledRes = await browser.storage.sync.get(
         CONSTANTS.STATUS_STORAGE_KEY
@@ -66,9 +75,17 @@ async function updateFavicons() {
 
         resetAllOutdatedFavicons(size);
 
-        const linkElements = document.querySelectorAll(
+        let linkElements = document.querySelectorAll(
             `${CONSTANTS.BODY_TAG} ${CONSTANTS.LINK_TAG}.${CONSTANTS.URL_CLASS}`
         );
+
+        // Legacy support
+        if (linkElements.length == 0) {
+            linkElements = document.querySelectorAll(
+                `${CONSTANTS.BODY_TAG} ${CONSTANTS.LINK_TAG}.${CONSTANTS.LEGACY_URL_CLASS}`
+            );
+        }
+
         linkElements.forEach(async (link) => {
             try {
                 const websiteUrl = link.href;

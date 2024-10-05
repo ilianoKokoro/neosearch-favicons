@@ -16,7 +16,9 @@
     "UPDATE_DELAY": 100,
 
     "LINK_ICON_CLASS": "neosearch-favicon",
-    "URL_CLASS": "url_wrapper",
+    "LEGACY_URL_CLASS": "url_wrapper",
+    "URL_CLASS": "url_header",
+    "INTEGRATED_FAVICON_CLASS": "favicon",
     "SIZE_INPUT_ID": "size",
     "STATUS_BUTTON_ID": "toggle",
 
